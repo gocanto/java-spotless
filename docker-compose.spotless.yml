@@ -1,0 +1,39 @@
+# =============================================================================
+# LOCAL DEVELOPMENT ONLY - Code Style Formatter
+# =============================================================================
+
+services:
+  spotless-check:
+    build:
+      context: .
+      dockerfile: dev/docker/Dockerfile.spotless
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    environment:
+      CODE_STYLE_ENV_ENABLED: ${CODE_STYLE_ENV_ENABLED:?}
+      HOME: /tmp
+      MAVEN_USER_HOME: /m2
+    volumes:
+      - ${REPO_DIR:-.}:/app
+      - spotless-m2-cache:/m2
+    command: mvn spotless:check
+    profiles:
+      - spotless
+
+  spotless-apply:
+    build:
+      context: .
+      dockerfile: dev/docker/Dockerfile.spotless
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    environment:
+      CODE_STYLE_ENV_ENABLED: ${CODE_STYLE_ENV_ENABLED:?}
+      HOME: /tmp
+      MAVEN_USER_HOME: /m2
+    volumes:
+      - ${REPO_DIR:-.}:/app
+      - spotless-m2-cache:/m2
+    command: mvn spotless:apply
+    profiles:
+      - spotless
+
+volumes:
+  spotless-m2-cache:

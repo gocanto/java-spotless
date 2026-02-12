@@ -1,0 +1,16 @@
+# =============================================================================
+# LOCAL DEVELOPMENT ONLY - Code Style Formatter
+# =============================================================================
+
+FROM maven:3.9-eclipse-temurin-21
+
+WORKDIR /app
+
+COPY dev/scripts/entrypoint.spotless.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Writable Maven cache for any UID/GID set by docker-compose
+RUN mkdir -p /m2 && chmod 777 /m2
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["mvn", "spotless:check"]
